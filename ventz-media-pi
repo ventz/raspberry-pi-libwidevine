@@ -1,0 +1,56 @@
+#!/bin/bash
+###########################################################
+# Project Name: ventz-media-pi
+# By: Ventz (https://blog.vpetkov.net)
+# License: http://creativecommons.org/licenses/by-sa/4.0/
+# VERSION: 1.2 | Date: 11-8-20  | Fix for new Chromium version (84+) and new WideVine setup: v.4.10.1679.0+
+# VERSION: 1.1 | Date: 4-7-20  | Fix screen tearing
+# VERSION: 1.0 | Date: 3-30-19 | Initial "Easy One Line" script based on work from 7-12-19 blog
+# NOTE: Please always keep this header!
+# You can test DRM with: https://bitmovin.com/demos/drm (wait a few seconds for full load)
+###########################################################
+
+echo "💾 Downloading latest extracted version of Widevine..."
+wget -q --no-check-certificate https://pi.vpetkov.net/libwidevinecdm.so
+wget -q --no-check-certificate https://pi.vpetkov.net/manifest.json
+chmod 755 libwidevinecdm.so && chmod 644 manifest.json 
+mkdir -p ${HOME}/.config/chromium-browser/WidevineCdm
+echo '{"Path":"/opt/WidevineCdm"}' > ${HOME}/.config/chromium-browser/WidevineCdm/latest-component-updated-widevine-cdm
+sudo mkdir -p /opt/WidevineCdm/_platform_specific/linux_arm && sudo mv -f manifest.json /opt/WidevineCdm && sudo mv -f libwidevinecdm.so /opt/WidevineCdm/_platform_specific/linux_arm 
+echo "✅ Widevin Setup Successfully"
+echo "💾 Downloading Chromium \"Media\" Launcher (always using your system's latest default Chromium browser)"
+wget -q --no-check-certificate https://pi.vpetkov.net/chromium-media-browser.desktop
+sudo mv -f chromium-media-browser.desktop /usr/share/applications
+echo "✅ Chromium \"Media\" Launcher Setup Successfully"
+
+echo "✂️  Fix for Screen Tearing"
+if [ -e /etc/xdg/autostart/xcompmgr.desktop ]; then
+    # backup - in case you want to put back the crappy refresh rate!
+    sudo mv /etc/xdg/autostart/xcompmgr.desktop /root/backup.xcompmgr.desktop;
+    sudo rm -f /etc/xdg/autostart/xcompmgr.desktop
+fi
+#sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq -y compton
+#mkdir -p ~/.config/lxsession/LXDE-pi
+#wget -q https://raw.githubusercontent.com/dastorm/Compton-xfce-config/master/compton.conf
+#mv -f compton.conf ~/.config
+#cp -f /etc/xdg/lxsession/LXDE-pi/autostart ~/.config/lxsession/LXDE-pi/autostart
+#echo "@usr/bin/compton --backend glx" >> ~/.config/lxsession/LXDE-pi/autostart
+#echo "xrandr --output HDMI-1 --mode 1280x720" >> ~/.config/lxsession/LXDE-pi/autostart
+echo "✅ Fix for Screen Tearing Setup Successfully - (YOU MUST REBOOT!) "
+echo ""
+echo "🍿 Your Pi is now Ready for all Media 🍿"
+echo ""
+echo "Go to the Application Menu, under \"Internet\", and start: Chromium (Media Edition)"
+
+echo "✅ Netflix"
+echo "✅ Hulu"
+echo "✅ Amazon Prime"
+echo "✅ Disney+"
+echo "✅ HBO"
+echo "✅ Spotify"
+echo "✅ Pandora"
+echo "✅ Hoopla"
+echo "✅ MUBI"
+echo "✅ BritBox"
+echo ""
+echo "Please Reboot your Pi and Enjoy!"
